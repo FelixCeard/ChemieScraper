@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import time
 
 from selenium.common.exceptions import TimeoutException
