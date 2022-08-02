@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import time
 
 from selenium.common.exceptions import TimeoutException

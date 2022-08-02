@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 import requests
+
 
 for i in range(10):
     url = f'https://gestis-api.dguv.de/api/exactimage/GHS/ghs0{i}.gif'

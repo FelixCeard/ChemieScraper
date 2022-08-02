@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from docx import Document
 from docx.shared import Inches
 
