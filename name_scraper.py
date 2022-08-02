@@ -23,11 +23,19 @@ class CASsearcher:
 
     def search(self, query: str):
         delay = self.delays['Selenium']['OpeningDelay']  # seconds
-        try:
-            # geladen = WebDriverWait(self.driver, delay).until(EC.presence_of_element_located((By.CLASS_NAME, "data-sheet-section-subchapter")))
-            WebDriverWait(self.driver, delay).until(EC.presence_of_element_located((By.ID, "input-133")))
-        except TimeoutException:
-            ...
+
+        while True:
+            # reload until the page is loaded
+            try:
+
+                try:
+
+                    WebDriverWait(self.driver, delay).until(EC.presence_of_element_located((By.ID, "input-133")))
+                    break
+                except TimeoutException:
+                    break
+            except Exception as e:
+                self.driver.refresh()
 
         search_field = self.driver.find_element(By.XPATH,
                                                 '/html/body/div[1]/div[1]/main/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/div/div/input')

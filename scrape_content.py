@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
 
 from document import ChemieDocumentCreator9000
 from name_scraper import CASsearcher
@@ -26,7 +27,11 @@ selenium = delays['Selenium']
 search = delays['Search']
 loop = delays['Loop']
 
+
+
+# content
 Stoff = st.text_input('Stoffname', '')
+
 
 if st.button("Add row"):
     get_data().append({"Stoffe": Stoff})
@@ -35,14 +40,32 @@ st.write(pd.DataFrame(get_data()))
 
 progress_bar = st.progress(0)
 
+allow_scrapping = True
 
 with st.spinner('Fetching information from GHS'):
-    if st.button('Suchen'):
+    placeholder = st.empty()
+    btn = placeholder.button('GESTIS Durchsuchen', disabled=False, key='1')
+    if btn:
+        placeholder.empty()
+        placeholder.button('GESTIS Durchsuchen', disabled=True, key='2')
         progress_bar.progress(0)
+        allow_scrapping = False
 
         try:
-            s = Service(settings['geckodriver path'])
-            driver = webdriver.Firefox(service=s)
+
+            # background window
+            CHROME_PATH = '/usr/bin/google-chrome'
+            CHROMEDRIVER_PATH = '/usr/bin/chromedriver'
+            WINDOW_SIZE = "1920,1080"
+
+            ff_option = Options()
+            ff_option.add_argument('--headless')
+            ff_option.add_argument("--disable-gpu")
+            ff_option.add_argument("--window-size=%s" % WINDOW_SIZE)
+
+            s = Service(executable_path=settings['geckodriver path'])
+
+            driver = webdriver.Firefox(service=s, options=ff_option)
         except Exception as e:
             print('Invalid Geckodriver path.\nPlease add the geckodriver path in the settings (settings.json)')
             exit()
@@ -78,3 +101,6 @@ with st.spinner('Fetching information from GHS'):
                 data=file,
                 file_name="Sicherheitstabelle.docx"
             )
+        allow_scrapping = True
+        placeholder.button('GESTIS Durchsuchen', disabled=False, key='3')
+        # placeholder.empty()

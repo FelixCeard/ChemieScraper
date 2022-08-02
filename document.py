@@ -80,7 +80,7 @@ class ChemieDocumentCreator9000:
         for name in self.not_found_stoffe:
             cells = table.add_row().cells
             cells[0].text = name
-            cells[1].text = "Stoff wurde nicht in der GES-Datenbank gefunden."
+            cells[1].text = "Stoff wurde nicht in der GESTIS-Datenbank gefunden."
 
         #######################################
                 # TEXT AFTER THE TABLE
