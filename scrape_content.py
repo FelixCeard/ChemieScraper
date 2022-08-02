@@ -1,17 +1,14 @@
 import json
+import os
 import time
 
 import pandas as pd
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
-from streamlit.state import SessionState
 
 from document import ChemieDocumentCreator9000
 from name_scraper import CASsearcher
-import yaml
-import os
-
 
 
 @st.cache(allow_output_mutation=True)
@@ -67,7 +64,7 @@ with st.spinner('Fetching information from GHS'):
                 time.sleep(loop['DelayExtraction'])
                 creator9000.extract_table()
             else:
-                creator9000.not_found_stoffe.append(stoff['Loop']['Stoffe'])
+                creator9000.not_found_stoffe.append(stoff['Stoffe'])
 
             p += percentage
             progress_bar.progress(p)

@@ -1,7 +1,7 @@
 from docx import Document
 from docx.shared import Inches
+
 from Scrapper import ChemieScrapper
-from name_scraper import CASsearcher
 
 
 class ChemieDocumentCreator9000:
