@@ -1,0 +1,17 @@
+{
+  "geckodriver path": "C:/Program Files/Google/Chrome/Application/geckodriver.exe",
+
+  "delays": {
+    "Selenium": {
+      "OpeningDelay": 1
+    },
+    "Search": {
+      "AfterSearchInput": 1,
+      "AfterSearch": 0.5
+    },
+    "Loop": {
+      "LoopDelay": 0.3,
+      "DelayExtraction": 1
+    }
+  }
+}

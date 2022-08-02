@@ -6,14 +6,18 @@ from name_scraper import CASsearcher
 
 class ChemieDocumentCreator9000:
 
-    def __init__(self, driver=None, append:bool = False):
+    def __init__(self, driver=None, delays=None, append:bool = False):
 
         self.scrapper = None
 
         if driver is not None:
-            self.scrapper = ChemieScrapper(driver=driver)
+            self.scrapper = ChemieScrapper(driver=driver, delays=delays)
         else:
-            self.scrapper = ChemieScrapper()
+            self.scrapper = ChemieScrapper(delays=delays)
+
+        self.delays = None
+        if delays is not None:
+            self.delays = delays
 
         self.document_name = 'Sicherheitstabelle.docx'
 
@@ -23,22 +27,34 @@ class ChemieDocumentCreator9000:
             self.document = Document()
         self.table_header = ["Substanz", "Gefahrenpiktrogramm", "H-Sätze", "P-Sätze", "Entsorgung"]
 
+        self.not_found_stoffe = []
+
         self.content = []
 
     def extract_table(self, zvg:str=None):
 
-        hs, ps, sw, srcs, name = self.scrapper.scrape(zvg)
+        hs, ps, sw, srcs, name, gefahr = self.scrapper.scrape(zvg)
+
+        if len(hs) == 0 and len(ps) == 0 and len(srcs) == 0:
+            sw = gefahr
+
         self.content.append([hs, ps, sw, srcs, name])
 
 
 
     def save(self, name=None):
 
+        #######################################
+                # TEXT BEFORE THE TABLE
+        #######################################
+        paragraph_before_table = self.document.add_paragraph()
+        paragraph_before_table = paragraph_before_table.add_run()
+        paragraph_before_table.add_text("")
+
         # create table
-        table = self.document.add_table(rows=len(self.content)+1, cols=5)
+        table = self.document.add_table(rows=1, cols=5)
         for i in range(5):
             table.rows[0].cells[i].text = self.table_header[i]
-
 
         for hs, ps, sw, srcs, name in self.content:
             data = [
@@ -53,11 +69,25 @@ class ChemieDocumentCreator9000:
                 r = p.add_run()
                 for alt in srcs:
                     r.add_picture(f'./images/{alt}.gif', width=Inches(0.472441))
+                r.add_text("")
                 r.add_text(sw)
 
                 cells[2].text = hs
                 cells[3].text = ps
                 cells[4].text = en
+
+        # add not found elements
+        for name in self.not_found_stoffe:
+            cells = table.add_row().cells
+            cells[0].text = name
+            cells[1].text = "Stoff wurde nicht in der GES-Datenbank gefunden."
+
+        #######################################
+                # TEXT AFTER THE TABLE
+        #######################################
+        paragraph_after_table = self.document.add_paragraph()
+        paragraph_after_table = paragraph_after_table.add_run()
+        paragraph_after_table.add_text("")
 
 
         self.document.save(self.document_name)
