@@ -42,7 +42,13 @@ class ChemieScrapper():
             except TimeoutException:
                 ...
 
+        # import selenium.webdriver.remote.webelement.WebElement as We
+
         content = self.driver.find_element(By.XPATH, '//*[@id="app"]/div/main/div/div[2]/div[2]/div/div/div[2]')
+        cas_number = content.find_elements(By.CSS_SELECTOR, 'casnr')[0].text
+
+        mol_masse = content.find_elements(By.XPATH, "//*[contains(text(), 'Molmasse:')]")[0].find_elements(By.XPATH, '..')[0].find_elements(By.XPATH, '..')[0].find_elements(By.XPATH, 'td[2]')[0]
+        mol_masse = re.findall(r'([\d,]+)', mol_masse.text)[0]
 
         children = content.find_elements(By.XPATH, "*")
 
@@ -90,14 +96,15 @@ class ChemieScrapper():
 
         hs, ps = [], []
 
+        regex_pattern = r'([HP\d+iIEU]+): (.+)'
         if h is not None:
-            hs = re.findall(r'([HP\d+iI]+):', h)
+            hs = re.findall(regex_pattern, h)
             if euh is not None:
-                euh = re.findall(r'([HP\d+iIEU]+):', euh)
+                euh = re.findall(regex_pattern, euh)
                 hs = hs + euh
 
         if p is not None:
-            ps = re.findall(r'([HP\d+iI]+):', p)
+            ps = re.findall(regex_pattern, p)
 
 
         ist_gefahr = re.findall(r'Kein gefährlicher Stoff nach GHS', html_text)
@@ -106,4 +113,4 @@ class ChemieScrapper():
         else:
             ist_gefahr = ''
 
-        return hs, ps, sw, src, name.text, ist_gefahr
+        return hs, ps, sw, src, name.text, ist_gefahr, cas_number, mol_masse

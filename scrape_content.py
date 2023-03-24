@@ -70,6 +70,7 @@ with st.spinner('Fetching information from GHS'):
 
             driver = webdriver.Firefox(service=s, options=ff_option)
         except Exception as e:
+            print(e)
             print('Invalid Geckodriver path.\nPlease add the geckodriver path in the settings (settings.json)')
             exit()
 
